@@ -24,7 +24,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 	uint256 public sustainabilityFee; // Fee charged to on-rampers in preciseUnits (1e16 = 1%)
 	address public sustainabilityFeeRecipient;
 
-	event OffRamp(string indexed payment_id, string payment_platform, uint256 depositAmount);
+	event OffRamp(string payment_id, string payment_platform, uint256 depositAmount);
 
 	constructor() {
 		_disableInitializers();
