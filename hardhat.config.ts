@@ -17,7 +17,7 @@ const config: HardhatUserConfig = {
 	solidity: {
 		compilers: [
 			{
-				version: '0.8.17',
+				version: '0.8.20',
 				settings: {
 					optimizer: {
 						enabled: true,
@@ -30,12 +30,15 @@ const config: HardhatUserConfig = {
 	namedAccounts: {
 		deployer: 0,
 		simpleERC20Beneficiary: 1,
+		onRamper: 2,
+		offRamper: 3,
 	},
 	networks: addForkConfiguration({
 		hardhat: {
 			initialBaseFeePerGas: 0, // to fix : https://github.com/sc-forks/solidity-coverage/issues/652, see https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136
 		},
 		localhost: {
+			autoImpersonate: true,
 			url: node_url('localhost'),
 			accounts: accounts(),
 		},
