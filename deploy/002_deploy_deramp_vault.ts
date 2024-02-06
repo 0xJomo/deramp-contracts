@@ -3,7 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-	const { deployer, simpleERC20Beneficiary } = await hre.getNamedAccounts();
+	const { deployer, simpleOffchainVerifier } = await hre.getNamedAccounts();
 	const asset = await (await hre.ethers.getContract('SimpleERC20', deployer)).getAddress();
 	console.log('vault asset: ', asset);
 	const { deploy } = hre.deployments;
@@ -23,12 +23,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 			execute: {
 				init: {
 					methodName: 'initialize',
-					args: [asset, 'DeRamp Token', 'RAMP', max, min, fee, simpleERC20Beneficiary],
+					args: [asset, 'DeRamp Token', 'RAMP', max, min, fee, simpleOffchainVerifier],
 				},
 
 				onUpgrade: {
 					methodName: 'postUpgrade',
-					args: [asset, 'DeRamp Token', 'RAMP', max, min, fee, simpleERC20Beneficiary],
+					args: [asset, 'DeRamp Token', 'RAMP', max, min, fee, simpleOffchainVerifier],
 				},
 			},
 		},

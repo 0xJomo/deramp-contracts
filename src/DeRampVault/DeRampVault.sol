@@ -20,6 +20,8 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 	// a mapping that checks if a user has deposited the token
 	mapping(address => uint256) public shareHolder;
 	uint256 public minDepositAmount;
+	ERC20 public uasset;
+
 	uint256 public maxOnRampAmount;
 	uint256 public sustainabilityFee; // Fee charged to on-rampers in preciseUnits (1e16 = 1%)
 	address public sustainabilityFeeRecipient;
@@ -51,6 +53,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		uint256 fee,
 		address benefactor
 	) public {
+		uasset = _asset;
 		minDepositAmount = min;
 		maxOnRampAmount = max;
 		sustainabilityFee = fee;
@@ -101,33 +104,65 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		require(shareHolder[offRamper] >= _shares, "Not enough shares");
 
 		// Calculate 10% yield on the withdrawal amount
-		uint256 percent = (10 * _shares) / 100;
+		//uint256 percent = (10 * _shares) / 100;
 		// Calculate the total asset amount as the sum of the share amount plus 10% of the share amount.
-		uint256 assets = _shares + percent;
+		//uint256 assets = _shares + percent;
 		// calling the redeem function from the ERC-4626 library to perform all the necessary functionality
-		redeem(assets, _receiver, offRamper);
+		//redeem(assets, _receiver, offRamper);
+		//__Context_init
+
+		//uint256 maxShares = maxRedeem(offRamper);
+      //  if (_shares > maxShares) {
+       //     revert ERC4626ExceededMaxRedeem(owner, _shares, maxShares);
+       // }
+
+        uint256 totalOnramp = previewRedeem(_shares);
+		_burn(offRamper, totalOnramp);
+        SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
+
+        //emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
+
+		///
 		// Decrease the share of the user
 		shareHolder[offRamper] -= _shares;
 	}
-
-	function withdrawDeposit(uint _shares, address _receiver) public  {
-		console.log("withD: %s %s %s", msg.sender, _shares,_receiver );
+	/**
+	 * @notice Function to allow msg.sender to withdraw their deposit plus accrued interest
+	 * @param _shares amount of shares the user wants to convert
+	 * @param _receiver address of the user who will receive the assets
+	 */
+	function withdrawDeposit(uint _shares, address _receiver) public onlyOwner {
 		// checks that the deposited amount is greater than zero.
 		require(_shares > 0, "withdraw must be greater than Zero");
 		// Checks that the _receiver address is not zero.
 		require(_receiver != address(0), "Zero Address");
 		// checks that the caller is a shareholder
-		require(shareHolder[msg.sender] > 0, "Not a share holder");
+		require(shareHolder[_receiver] > 0, "Not a share holder");
 		// checks that the caller has more shares than they are trying to withdraw.
-		require(shareHolder[msg.sender] >= _shares, "Not enough shares");
+		require(shareHolder[_receiver] >= _shares, "Not enough shares");
+
 		// Calculate 10% yield on the withdrawal amount
 		//uint256 percent = (10 * _shares) / 100;
 		// Calculate the total asset amount as the sum of the share amount plus 10% of the share amount.
-		uint256 assets = _shares;
+		//uint256 assets = _shares + percent;
 		// calling the redeem function from the ERC-4626 library to perform all the necessary functionality
-		redeem(assets, _receiver, msg.sender);
+		//redeem(assets, _receiver, offRamper);
+		//__Context_init
+
+		//uint256 maxShares = maxRedeem(offRamper);
+      //  if (_shares > maxShares) {
+       //     revert ERC4626ExceededMaxRedeem(owner, _shares, maxShares);
+       // }
+
+        uint256 totalOnramp = previewRedeem(_shares);
+		_burn(_receiver, totalOnramp);
+        SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
+
+        //emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
+
+		///
 		// Decrease the share of the user
-		shareHolder[msg.sender] -= _shares;
+		shareHolder[_receiver] -= _shares;
 	}
 
 	function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}

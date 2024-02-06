@@ -8,9 +8,9 @@ const account = args[0];
 const message = args[1];
 
 async function main() {
-	const { owner, simpleERC20Beneficiary, onRamper } = await getNamedAccounts();
+	const { owner, simpleERC20Beneficiary, offRamper } = await getNamedAccounts();
 	const benefactor = await ethers.getSigner(simpleERC20Beneficiary);
-	const bob = await ethers.getSigner(onRamper);
+	const bob = await ethers.getSigner(offRamper);
 
 	console.log('account: ', simpleERC20Beneficiary);
 	console.log('account: ', bob.address);

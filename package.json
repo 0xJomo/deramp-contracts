@@ -26,7 +26,8 @@
     "solidity-coverage": "^0.8.6",
     "solmate": "github:transmissions11/solmate",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@nomicfoundation/hardhat-verify": "^2.0.4"
   },
   "scripts": {
     "prepare": "node ./.setup.js && hardhat typechain",
