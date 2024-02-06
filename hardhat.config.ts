@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
 		onRamper: 2,
 		offRamper: 3,
 		simpleOffchainVerifier: {
-			default: 4,
+			default: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
 			sepolia: '0x36e7Fda8CC503D5Ec7729A42eb86EF02Af315Bf9'
 		},
 

@@ -8,11 +8,11 @@ const account = args[0];
 const message = args[1];
 
 async function main() {
-	const { owner, simpleOffchainVerifier, offRamper } = await getNamedAccounts();
-	const benefactor = await ethers.getSigner(simpleOffchainVerifier);
+	const { deployer, simpleOffchainVerifier, offRamper } = await getNamedAccounts();
+	const benefactor = await ethers.getSigner(deployer);
 	const bob = await ethers.getSigner(offRamper);
 
-	console.log('simpleERC20Beneficiary: ', simpleOffchainVerifier);
+	console.log('simpleERC20Beneficiary: ', deployer);
 	console.log('bob.address: ', bob.address);
 
 	const erc20Deployment = await deployments.get('SimpleERC20');

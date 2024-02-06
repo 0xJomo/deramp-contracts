@@ -27,11 +27,11 @@ async function main() {
 		console.log('deramp balance: ', supp2);
 	 */
 
-	const { owner, simpleOffchainVerifier, offRamper, onRamper } = await getNamedAccounts();
+	const { deployer, simpleOffchainVerifier, offRamper, onRamper } = await getNamedAccounts();
 	const SimpleERC20Factory = await deployments.get('SimpleERC20');
 	const DeRampVault = await deployments.get('DeRampVault');
 
-	const benefactor = await ethers.getSigner(simpleOffchainVerifier);
+	const benefactor = await ethers.getSigner(deployer);
 	const bobby = await ethers.getSigner(offRamper);
 	const alice = await ethers.getSigner(onRamper);
 

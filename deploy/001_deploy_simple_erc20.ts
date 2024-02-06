@@ -10,7 +10,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	await deploy('SimpleERC20', {
 		from: deployer,
-		args: [simpleOffchainVerifier, parseEther('1000000000')],
+		args: [deployer, parseEther('1000000000')],
 		log: true,
 		autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
 	});

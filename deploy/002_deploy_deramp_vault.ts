@@ -17,7 +17,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	await deploy('DeRampVault', {
 		from: deployer,
 		proxy: useProxy && {
-			owner: deployer,
+			owner: simpleOffchainVerifier,
 			proxyContract: 'UUPS',
 
 			execute: {
