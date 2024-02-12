@@ -1,4 +1,4 @@
-# Boilerplate for ethereum solidity smart contract development
+# deramp sepolia config:
 
 ## quickstart
 
