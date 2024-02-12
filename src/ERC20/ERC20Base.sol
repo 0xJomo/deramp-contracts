@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-1.0
-pragma solidity 0.8.17;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./ERC20Internal.sol";
 import "../Libraries/Constants.sol";
+import "hardhat/console.sol";
 
 interface ITransferReceiver {
 	function onTokenTransfer(address, uint256, bytes calldata) external returns (bool);
@@ -108,6 +109,7 @@ abstract contract ERC20Base is IERC20, ERC20Internal {
 	}
 
 	function transferFrom(address from, address to, uint256 amount) external override returns (bool) {
+		console.log("transfer %s %s %s", from, to, amount);
 		_transferFrom(from, to, amount);
 		return true;
 	}

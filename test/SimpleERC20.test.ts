@@ -5,7 +5,7 @@ import {setupUser, setupUsers} from './utils';
 
 const setup = deployments.createFixture(async () => {
 	await deployments.fixture('SimpleERC20');
-	const {simpleERC20Beneficiary} = await getNamedAccounts();
+	const {simpleOffchainVerifier} = await getNamedAccounts();
 	const contracts = {
 		SimpleERC20: await ethers.getContract<IERC20>('SimpleERC20'),
 	};
@@ -13,7 +13,7 @@ const setup = deployments.createFixture(async () => {
 	return {
 		...contracts,
 		users,
-		simpleERC20Beneficiary: await setupUser(simpleERC20Beneficiary, contracts),
+		simpleERC20Beneficiary: await setupUser(simpleOffchainVerifier, contracts),
 	};
 });
 
