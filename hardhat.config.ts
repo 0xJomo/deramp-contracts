@@ -73,6 +73,10 @@ const config: HardhatUserConfig = {
 			url: node_url('goerli'),
 			accounts: accounts('goerli'),
 		},
+		blast: {
+			url: node_url('blast'),
+			accounts: accounts('blast'),
+		},
 	}),
 	paths: {
 		sources: 'src',
