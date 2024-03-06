@@ -8,14 +8,14 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { StringUtils } from "@zk-email/contracts/utils/StringUtils.sol";
+import {StringUtils} from "@zk-email/contracts/utils/StringUtils.sol";
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 import "hardhat-deploy/solc_0.8/proxy/Proxied.sol";
 import "hardhat/console.sol";
 
 contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
-	    using StringUtils for uint256[];
+	using StringUtils for uint256[];
 
 	// a mapping that checks if a user has deposited the token
 	mapping(address => uint256) public shareHolder;
@@ -41,7 +41,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		uint256 fee,
 		address benefactor
 	) public initializer {
-		postUpgrade( _asset, _name, _symbol, max, min, fee, benefactor);
+		postUpgrade(_asset, _name, _symbol, max, min, fee, benefactor);
 	}
 
 	function postUpgrade(
@@ -66,19 +66,18 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		__UUPSUpgradeable_init();
 	}
 
-   function offramp(string memory paymentProcessor, string memory ppId, uint amount, address _receiver) public{
+	function offramp(string memory paymentProcessor, string memory ppId, uint amount, address _receiver) public {
 		//	console.log("offramp: %s %s %x %x", paymentProcessor, ppId, amount,_receiver );
-					console.log("offramp from %s to %s %s", _receiver, amount, ppId);
-
+		console.log("offramp from %s to %s %s", _receiver, amount, ppId);
 
 		deposit(amount, _receiver);
 		emit OffRamp(ppId, paymentProcessor, amount, _receiver);
-  }
+	}
 	/**
 	 * @notice function to deposit assets and receive vault tokens in exchange
 	 * @param _assets amount of the asset token
 	 */
-	function deposit( uint _assets, address _receiver) public override returns (uint256) {
+	function deposit(uint _assets, address _receiver) public override returns (uint256) {
 		// checks that the deposited amount is greater than zero.
 		console.log("deposit from %s to %d tokens: rec: %s", msg.sender, _assets, _receiver);
 		require(_assets > 0, "Deposit less than Zero");
@@ -87,7 +86,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		shareHolder[_receiver] += _assets;
 		return shares;
 	}
-	   
+
 	/**
 	 * @notice Function to allow msg.sender to withdraw their deposit plus accrued interest
 	 * @param _shares amount of shares the user wants to convert
@@ -112,15 +111,15 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		//__Context_init
 
 		//uint256 maxShares = maxRedeem(offRamper);
-      //  if (_shares > maxShares) {
-       //     revert ERC4626ExceededMaxRedeem(owner, _shares, maxShares);
-       // }
+		//  if (_shares > maxShares) {
+		//     revert ERC4626ExceededMaxRedeem(owner, _shares, maxShares);
+		// }
 
-        uint256 totalOnramp = previewRedeem(_shares);
+		uint256 totalOnramp = previewRedeem(_shares);
 		_burn(offRamper, totalOnramp);
-        SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
+		SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
 
-        //emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
+		//emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
 
 		///
 		// Decrease the share of the user
@@ -150,15 +149,15 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		//__Context_init
 
 		//uint256 maxShares = maxRedeem(offRamper);
-      //  if (_shares > maxShares) {
-       //     revert ERC4626ExceededMaxRedeem(owner, _shares, maxShares);
-       // }
+		//  if (_shares > maxShares) {
+		//     revert ERC4626ExceededMaxRedeem(owner, _shares, maxShares);
+		// }
 
-        uint256 totalOnramp = previewRedeem(_shares);
+		uint256 totalOnramp = previewRedeem(_shares);
 		_burn(_receiver, totalOnramp);
-        SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
+		SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
 
-        //emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
+		//emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
 
 		///
 		// Decrease the share of the user
@@ -166,4 +165,12 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 	}
 
 	function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+	function withdraw(uint256 assets, address receiver, address owner) public override onlyOwner returns (uint256) {
+		return super.withdraw(assets, receiver, owner);
+	}
+
+	function mint(uint256 shares, address receiver) public override onlyOwner returns (uint256) {
+		return super.mint(shares, receiver);
+	}
 }
