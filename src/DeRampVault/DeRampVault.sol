@@ -117,7 +117,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 
 		uint256 totalOnramp = previewRedeem(_shares);
 		_burn(offRamper, totalOnramp);
-		SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
+		SafeERC20.safeTransfer(uasset, _receiver, _shares);
 
 		//emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
 
@@ -155,7 +155,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 
 		uint256 totalOnramp = previewRedeem(_shares);
 		_burn(_receiver, totalOnramp);
-		SafeERC20.safeTransferFrom(uasset, address(this), _receiver, _shares);
+		SafeERC20.safeTransfer(uasset, _receiver, _shares);
 
 		//emit Withdraw(offRamper, _receiver, owner, uasset, _shares);
 
