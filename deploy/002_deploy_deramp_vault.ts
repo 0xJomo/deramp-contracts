@@ -1,14 +1,13 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { ethers } from 'hardhat';
+import {HardhatRuntimeEnvironment} from 'hardhat/types';
+import {DeployFunction} from 'hardhat-deploy/types';
+import {ethers} from 'hardhat';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-	const { deployer, simpleOffchainVerifier } = await hre.getNamedAccounts();
+	const {deployer, simpleOffchainVerifier} = await hre.getNamedAccounts();
 	const asset = await (await hre.ethers.getContract('SimpleERC20', deployer)).getAddress();
 	console.log('vault asset: ', asset);
-	const { deploy } = hre.deployments;
-	//const useProxy = !hre.network.live;
-	const useProxy = true;
+	const {deploy} = hre.deployments;
+	const useProxy = !hre.network.live;
 	const max = ethers.parseEther('1');
 	const min = ethers.parseEther('.001');
 	const fee = 0;
