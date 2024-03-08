@@ -1,11 +1,16 @@
+
+<img width="744" alt="Screenshot 2024-03-07 at 9 09 00 PM" src="https://github.com/0xJomo/deramp-contracts/assets/804368/2b08fd9f-9e8e-454c-937d-6ce1407ee592">
+
+
+
 # deramp sepolia config:
 
 ## quickstart
 
 ```bash
-pnpm i
-pnpm prepare
-pnpm dev
+yarn
+yarn prepare
+yarn dev
 ```
 add sepolia eth to an account and add it to .env:
 
@@ -31,5 +36,5 @@ edit **hardhat.config.ts**, and fill in the address for the simpleOffchainVerifi
 ## in another shell
 
 ```bash
-pnpm execute localhost scripts/getBalance.ts
+yarn execute localhost scripts/getBalance.ts
 ```
