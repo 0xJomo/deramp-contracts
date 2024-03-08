@@ -2,20 +2,21 @@
 
 pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "hardhat-deploy/solc_0.8/proxy/Proxied.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+
+import "hardhat-deploy/solc_0.8/proxy/Proxied.sol";
+
 import {StringUtils} from "@zk-email/contracts/utils/StringUtils.sol";
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
-import "hardhat-deploy/solc_0.8/proxy/Proxied.sol";
 import "hardhat/console.sol";
 
-contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
+contract DeRampVault is ERC4626, Proxied, AccessControl {
 	using StringUtils for uint256[];
+
+	bytes32 public constant OFFCHAINVERIFIER_ROLE = keccak256("OFFCHAINVERIFIER_ROLE");
 
 	// a mapping that checks if a user has deposited the token
 	mapping(address => uint256) public shareHolder;
@@ -28,20 +29,16 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 
 	event OffRamp(string payment_id, string payment_platform, uint256 depositAmount, address offramper);
 
-	constructor() {
-		_disableInitializers();
-	}
-
-	function initialize(
+	constructor(
 		ERC20 _asset,
 		string memory _name,
 		string memory _symbol,
 		uint256 max,
 		uint256 min,
 		uint256 fee,
-		address benefactor
-	) public initializer {
-		postUpgrade(_asset, _name, _symbol, max, min, fee, benefactor);
+		address offchainVerifier
+	) ERC4626(IERC20Metadata(_asset)) ERC20(_name, _symbol) {
+		postUpgrade(_asset, _name, _symbol, max, min, fee, offchainVerifier);
 	}
 
 	function postUpgrade(
@@ -51,19 +48,15 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		uint256 max,
 		uint256 min,
 		uint256 fee,
-		address benefactor
+		address offchainVerifier
 	) public {
+		_grantRole(OFFCHAINVERIFIER_ROLE, offchainVerifier);
+
 		uasset = _asset;
 		minDepositAmount = min;
 		maxOnRampAmount = max;
 		sustainabilityFee = fee;
-		sustainabilityFeeRecipient = benefactor;
-
-		__ERC20_init(_name, _symbol);
-		__ERC4626_init(_asset);
-		__Ownable_init(benefactor);
-
-		__UUPSUpgradeable_init();
+		sustainabilityFeeRecipient = offchainVerifier;
 	}
 
 	function offramp(string memory paymentProcessor, string memory ppId, uint amount, address _receiver) public {
@@ -92,7 +85,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 	 * @param _shares amount of shares the user wants to convert
 	 * @param _receiver address of the user who will receive the assets
 	 */
-	function onramp(uint _shares, address offRamper, address _receiver) public onlyOwner {
+	function onramp(uint _shares, address offRamper, address _receiver) public onlyRole(OFFCHAINVERIFIER_ROLE) {
 		// checks that the deposited amount is greater than zero.
 		require(_shares > 0, "withdraw must be greater than Zero");
 		// Checks that the _receiver address is not zero.
@@ -130,7 +123,7 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 	 * @param _shares amount of shares the user wants to convert
 	 * @param _receiver address of the user who will receive the assets
 	 */
-	function withdrawDeposit(uint _shares, address _receiver) public onlyOwner {
+	function withdrawDeposit(uint _shares, address _receiver) public onlyRole(OFFCHAINVERIFIER_ROLE) {
 		// checks that the deposited amount is greater than zero.
 		require(_shares > 0, "withdraw must be greater than Zero");
 		// Checks that the _receiver address is not zero.
@@ -164,13 +157,15 @@ contract DeRampVault is Initializable, ERC4626Upgradeable, UUPSUpgradeable, Owna
 		shareHolder[_receiver] -= _shares;
 	}
 
-	function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
-
-	function withdraw(uint256 assets, address receiver, address owner) public override onlyOwner returns (uint256) {
+	function withdraw(
+		uint256 assets,
+		address receiver,
+		address owner
+	) public override onlyRole(OFFCHAINVERIFIER_ROLE) returns (uint256) {
 		return super.withdraw(assets, receiver, owner);
 	}
 
-	function mint(uint256 shares, address receiver) public override onlyOwner returns (uint256) {
+	function mint(uint256 shares, address receiver) public override onlyRole(OFFCHAINVERIFIER_ROLE) returns (uint256) {
 		return super.mint(shares, receiver);
 	}
 }
