@@ -27,4 +27,4 @@ jobs:
       - name: lint
         uses: borales/actions-yarn@v4
         with:
-          cmd: format:fix
+          cmd: format
