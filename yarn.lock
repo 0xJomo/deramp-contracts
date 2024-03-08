@@ -3491,9 +3491,9 @@ solidity-coverage@^0.8.6:
     shelljs "^0.8.3"
     web3-utils "^1.3.6"
 
-"solmate@github:transmissions11/solmate":
+"solmate@https://github.com/transmissions11/solmate.git":
   version "6.2.0"
-  resolved "git+ssh://git@github.com/transmissions11/solmate.git#c892309933b25c03d32b1b0d674df7ae292ba925"
+  resolved "https://github.com/transmissions11/solmate.git#c892309933b25c03d32b1b0d674df7ae292ba925"
 
 source-map-support@^0.5.13:
   version "0.5.21"
