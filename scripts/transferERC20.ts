@@ -1,6 +1,6 @@
-import { deployments, getNamedAccounts, getUnnamedAccounts, ethers } from 'hardhat';
+import {deployments, getNamedAccounts, getUnnamedAccounts, ethers} from 'hardhat';
 
-const { execute } = deployments;
+const {execute} = deployments;
 // example script
 
 const args = process.argv.slice(2);
@@ -8,7 +8,7 @@ const account = args[0];
 const message = args[1];
 
 async function main() {
-	const { deployer, simpleOffchainVerifier, offRamper } = await getNamedAccounts();
+	const {deployer, simpleOffchainVerifier, offRamper} = await getNamedAccounts();
 	const benefactor = await ethers.getSigner(deployer);
 	const bob = await ethers.getSigner(offRamper);
 
@@ -18,7 +18,6 @@ async function main() {
 	const erc20Deployment = await deployments.get('SimpleERC20');
 
 	const erc20ABI = await ethers.getContractFactory('SimpleERC20');
-
 
 	const DeRampHandle = await erc20ABI.connect(benefactor).attach(erc20Deployment.address);
 	const tx = await DeRampHandle.transfer(bob.address, ethers.parseEther('10000'));

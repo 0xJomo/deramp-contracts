@@ -1,6 +1,6 @@
-import { deployments, getNamedAccounts, getUnnamedAccounts, ethers } from 'hardhat';
+import {deployments, getNamedAccounts, getUnnamedAccounts, ethers} from 'hardhat';
 
-const { execute } = deployments;
+const {execute} = deployments;
 // example script
 
 const args = process.argv.slice(2);
@@ -8,7 +8,7 @@ const account = args[0];
 const message = args[1];
 
 async function main() {
-	const { owner, simpleERC20Beneficiary, offRamper, simpleOffchainVerifier } = await getNamedAccounts();
+	const {owner, simpleERC20Beneficiary, offRamper, simpleOffchainVerifier} = await getNamedAccounts();
 	const benefactor = await ethers.getSigner(simpleOffchainVerifier);
 	const bob = await ethers.getSigner(offRamper);
 
